@@ -1,6 +1,8 @@
 resource "aws_vpc" "vpc" {
     cidr_block = var.cidr_block
 
+    #checkov:skip=CKV2_AWS_11:El VPC solo sera usado en desarrollo
+    #checkov:skip=CKV2_AWS_12:El NSG si requeire tener acceso hacia internet
     tags = {
       Name = "${var.codigo_app}-vpc"
     }

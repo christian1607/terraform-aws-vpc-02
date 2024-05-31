@@ -27,6 +27,7 @@ jobs:
         download_external_modules: true
   test_module:
     name: "Test Module"
+    needs: security_check
     environment: dev
     #if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest

@@ -1,0 +1,111 @@
+trigger:
+  branches:
+    include:
+      - main
+      - hotfix/*
+      - feature/*
+  paths:
+    exclude:
+      - README.md
+      - .gitignore
+      - devops/*
+
+pool: 
+  vmImage: ubuntu-20.04 #
+
+variables:
+- group: terraform-aws-module
+- name: TERRADOC-VERSION
+  value: v0.17.0
+
+stages:
+  
+  - stage: Build
+    jobs:
+
+    - job: "Terraform"
+      displayName: "Terraform Tasks"    
+      steps:      
+      - checkout: self
+        fetchDepth: 0
+        persistCredentials: true
+
+      - task: Bash@3
+        displayName: "Installing Checkov"
+        inputs:
+          targetType: "inline"
+          script: |
+            pip3 install checkov
+          workingDirectory: "$(System.DefaultWorkingDirectory)"
+          failOnStderr: false
+     
+      - task: Bash@3
+        displayName: "Verify module"
+        inputs:
+          targetType: "inline"
+          script: |
+            checkov -d ./
+          workingDirectory: "$(System.DefaultWorkingDirectory)"
+          failOnStderr: true
+        
+      - task: Bash@3
+        displayName: "Testing"
+        env:
+          AWS_ACCESS_KEY_ID: $(access-key)
+          AWS_SECRET_ACCESS_KEY: $(secret-key)
+        inputs:
+          targetType: "inline"
+          script: |
+            terraform init
+            terraform test
+          workingDirectory: "$(System.DefaultWorkingDirectory)"
+          failOnStderr: true
+       
+      - task: Bash@3
+        displayName: "Updating Module Doc"
+        condition:  and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main' ))
+        inputs:
+          targetType: "inline"
+          script: |
+            curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/$(TERRADOC-VERSION)/terraform-docs-$(TERRADOC-VERSION)-$(uname)-amd64.tar.gz
+            tar -xzf terraform-docs.tar.gz
+            chmod +x terraform-docs
+            mv terraform-docs /tmp/terraform-docs
+            /tmp/terraform-docs -c .terraform-doc.yaml . > README.md
+            git config user.email "noreply@example.com"
+            git config user.name "Azure DevOps Pipeline"
+            git checkout main
+            git add README.md
+            git commit -m "Terradoc - Update README"
+            git push origin main
+          workingDirectory: "$(System.DefaultWorkingDirectory)"
+          failOnStderr: false
+      
+      - task: gitversion/setup@1.1.1
+        condition:  and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main' ))
+        displayName: Install GitVersion
+        inputs:
+          versionSpec: '5.x'
+      
+      - task: gitversion/execute@1.1.1
+        condition:  and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main' ))
+        displayName: Determine Version
+        inputs:
+          useConfigFile: true
+          configFilePath: 'gitversion.yml'
+
+      - task: Bash@3
+        displayName: "Apply tag"
+        condition:  and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main' ))
+        inputs:
+          targetType: "inline"
+          script: |
+            git config user.email "noreply@example.com"
+            git config user.name "Azure DevOps Pipeline"
+            git tag -a "v$(GitVersion.SemVer)" -m "Publish tag"
+            git push origin "v$(GitVersion.SemVer)" -q
+          workingDirectory: "$(System.DefaultWorkingDirectory)"
+          failOnStderr: false 
+
+    
+      

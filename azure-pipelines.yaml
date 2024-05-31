@@ -39,27 +39,27 @@ stages:
           workingDirectory: "$(System.DefaultWorkingDirectory)"
           failOnStderr: false
      
-  #    - task: Bash@3
-  #      displayName: "Verify module"
-  #      inputs:
-  #        targetType: "inline"
-  #        script: |
-  #          checkov -d ./
-  #        workingDirectory: "$(System.DefaultWorkingDirectory)"
-  #        failOnStderr: true
-        
       - task: Bash@3
-        displayName: "Testing"
-        env:
-          AWS_ACCESS_KEY_ID: $(access-key)
-          AWS_SECRET_ACCESS_KEY: $(secret-key)
+        displayName: "Verify module"
         inputs:
           targetType: "inline"
           script: |
-            terraform init
-            terraform test
+            checkov -d ./
           workingDirectory: "$(System.DefaultWorkingDirectory)"
           failOnStderr: true
+        
+  #    - task: Bash@3
+  #      displayName: "Testing"
+  #      env:
+  #        AWS_ACCESS_KEY_ID: $(access-key)
+  #        AWS_SECRET_ACCESS_KEY: $(secret-key)
+  #      inputs:
+  #        targetType: "inline"
+  #        script: |
+  #          terraform init
+  #          terraform test
+  #        workingDirectory: "$(System.DefaultWorkingDirectory)"
+  #        failOnStderr: true
        
       - task: Bash@3
         displayName: "Updating Module Doc"

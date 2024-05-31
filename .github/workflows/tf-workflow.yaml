@@ -15,7 +15,7 @@ jobs:
   security_check:
     name: "Security Scan"
     environment: dev
-    #if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4.1.5
@@ -29,7 +29,7 @@ jobs:
     name: "Test Module"
     needs: security_check
     environment: dev
-    #if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -54,4 +54,20 @@ jobs:
       working-directory: test
       run: go test -v
           
+  update_document:
+    needs: test_module
+    if: github.ref == "refs/heads/main"  && always()
+    name: 'Update Documentation'
+    environment: dev
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4.1.5
+    - name: update doc
+      uses: terraform-docs/gh-actions@v1.1.0
+      with:
+        working-dir: .
+        output-file: README.md
+        output-method: inject
+        git-push: "true"
       
+

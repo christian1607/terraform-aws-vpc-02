@@ -1,4 +1,7 @@
-<!-- BEGIN_TF_DOCS -->
+Modulo VPC
+
+Este modulo permite la creacion de componentes de networking usados para EKS
+
 ## Requirements
 
 No requirements.
@@ -7,26 +10,7 @@ No requirements.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
-
-## Modules
-
-No modules.
-
-## Resources
-
-| Name | Type |
-|------|------|
-| [aws_eip.ip](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eip) | resource |
-| [aws_internet_gateway.igw](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway) | resource |
-| [aws_nat_gateway.nat](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/nat_gateway) | resource |
-| [aws_route_table.privada](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table) | resource |
-| [aws_route_table.publica](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table) | resource |
-| [aws_route_table_association.privado](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association) | resource |
-| [aws_route_table_association.publica](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association) | resource |
-| [aws_subnet.privada](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
-| [aws_subnet.publica](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
-| [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.52.0 |
 
 ## Inputs
 
@@ -43,4 +27,5 @@ No modules.
 |------|-------------|
 | <a name="output_subnet_private_data"></a> [subnet\_private\_data](#output\_subnet\_private\_data) | n/a |
 | <a name="output_subnet_public_data"></a> [subnet\_public\_data](#output\_subnet\_public\_data) | n/a |
-<!-- END_TF_DOCS -->
+
+Cualquier consultar con el equipo de infra: infra@dominio.com

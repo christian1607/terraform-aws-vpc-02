@@ -5,6 +5,7 @@ resource "aws_vpc" "vpc" {
     #checkov:skip=CKV2_AWS_12:El NSG si requeire tener acceso hacia internet
     tags = {
       Name = "${var.codigo_app}-vpc"
+      Project = "htfc"
     }
 }
 

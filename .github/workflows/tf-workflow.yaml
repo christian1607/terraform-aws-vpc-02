@@ -69,5 +69,29 @@ jobs:
         output-file: README.md
         output-method: inject
         git-push: "true"
+  release_module:
+    needs: update_document
+    if: github.ref == 'refs/heads/main' && always()
+    name: "Release new version"
+    environment: dev
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4.1.5
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v1.1.1
+      with:
+        versionSpec: '5.x'
+    - name: Calculate Tag
+      id: tag_version
+      uses: gittools/actions/gitversion/execute@v1.1.1
+
+    - name: Create Tag
+      run: |
+        git config user.email "noreply@example.com"
+        git config user.name "Github Actions"
+        git tag -a "${{ steps.tag_version.outputs.semVer }}" -m "Publish tag"
+        git push origin "${{ steps.tag_version.outputs.semVer }}" -q
+    
+    
       
 

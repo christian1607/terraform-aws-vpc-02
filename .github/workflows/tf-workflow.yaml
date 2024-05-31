@@ -50,6 +50,8 @@ jobs:
         terraform_version: ${{ env.TF_VERSION}}
         terraform_wrapper: false
 
-
+    - name: Test Module
+      working-directory: test
+      run: go test -v
           
       
